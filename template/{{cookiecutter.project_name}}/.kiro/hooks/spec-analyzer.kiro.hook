@@ -1,0 +1,16 @@
+{
+    "enabled": true,
+    "name": "Spec Analyzer",
+    "description": "Analyzes modified requirements and design documents to identify functional and technical specifications, then updates or creates appropriate SPECS",
+    "version": "1",
+    "when": {
+        "type": "fileEdited",
+        "patterns": [
+            ".kiro/specs/**/tasks.md"
+        ]
+    },
+    "then": {
+        "type": "askAgent",
+        "prompt": "You are an expert technical product manager. design.md document has been modified. Please:\n\n1. Analyze the modified design document and the requirement document associated with it, to understand technical and functional specifications\n2. Read all existing specifications in the docs/specs/ directory to understand the current specifications\n3. Identify if there are more user stories, rules, specifications  that could be applied to improve the overall project\n4. - Check if a SPEC file already exists for this user story \n   - If an ADR exists, update it with the new information\n   - If no ADR exists, create a new ADR following the standard format with proper numbering\n   - Read spec.md in .kiro/steering, and create a spec based on this steering and the template."
+    }
+}

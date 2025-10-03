@@ -1,0 +1,33 @@
+colorama==0.4.6                  # Cross-platform colored terminal text
+
+# Python code analysis and documentation extraction
+griffe==0.38.1                   # Python code analysis for mkdocstrings
+Jinja2==3.1.2                    # Template engine used by MkDocs
+
+# Search functionality
+lunr==0.6.2                      # Search indexing for offline search
+markdown==3.5.2                  # Markdown processing
+# Documentation dependencies for MkDocs with mkdocstrings and Material theme
+# Core MkDocs framework
+mkdocs==1.5.3
+mkdocs-autorefs==0.5.0           # Compatible version with mkdocstrings 0.23.0
+
+# Additional MkDocs plugins for enhanced functionality
+mkdocs-gen-files==0.5.0          # Generate files programmatically
+mkdocs-literate-nav==0.6.1       # Navigation from literate programming
+
+# Material theme for modern, professional appearance with search and responsive design
+mkdocs-material==9.4.14
+mkdocs-section-index==0.3.8      # Section index pages
+
+# mkdocstrings plugin for automatic Python docstring extraction - compatible versions
+mkdocstrings[python]==0.23.0     # Downgraded for compatibility
+
+# Markdown extensions and processing
+pymdown-extensions==10.7         # Additional markdown extensions for Material theme
+
+# Core dependencies for Python processing and YAML configuration
+PyYAML==6.0.1                    # YAML configuration parsing
+
+# Development and build dependencies
+watchdog==3.0.0                  # File watching for live reload during development

@@ -1,0 +1,122 @@
+# MkDocs configuration for {{cookiecutter.project_name}}
+# This configuration provides a clean documentation setup
+# Environment-specific values can be overridden in deployment tasks
+
+site_name: "{{cookiecutter.project_name}} Documentation"
+site_description: "{{cookiecutter.project_description}}"
+
+# Site URL - can be overridden in deployment
+site_url: "http://localhost:8000"
+
+# Standard MkDocs directory structure
+# docs_dir: docs (default - markdown files in docs/ directory)
+# site_dir: site (default - generated files in site/ directory)
+
+# Use relative URLs for all internal links to ensure compatibility
+# between local development and deployed environments
+use_directory_urls: true
+
+# Repository configuration - update these for your project
+repo_url: ""
+repo_name: "{{cookiecutter.project_name}}"
+edit_uri: ""
+
+# Theme configuration with Material Design
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: teal
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+      primary: teal
+      accent: lime
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Architecture:
+      - Domain Models: reference/shared/domain/models.md
+      - Domain Services: reference/shared/domain/services.md
+      - Ports: reference/shared/ports.md
+      - Adapters: reference/shared/adapters.md
+  - Functions:
+      - Handlers: reference/functions/handlers.md
+  - Infrastructure: reference/infrastructure.md
+  - Testing:
+      - Integration Tests: reference/tests/integration.md
+      - Test Utils: reference/tests/utils.md
+
+# Plugins for automatic API documentation generation
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: false
+            merge_init_into_class: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            paths: [src, infrastructure, .]
+
+# Markdown extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.mark
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+# Custom CSS and JavaScript
+extra_css:
+  - assets/css/custom.css
+
+extra_javascript:
+  - assets/js/custom.js
+
+# Extra configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: "#"
+      name: Source Code

@@ -1,0 +1,48 @@
+version: "3"
+
+dotenv: [".env", "docs/docstring/.env", "$ENV/.env", "$HOME/.env"]
+
+includes:
+  cdk:
+    taskfile: ./infrastructure/Taskfile.yml
+    dir: ./infrastructure
+  test:
+    taskfile: ./src/tests/Taskfile.yml
+    dir: ./src/tests
+  docs:
+    taskfile: ./docs/Taskfile.yml
+    dir: ./docs
+
+vars:
+  PYTHON_VERSION: "{{cookiecutter.python_version}}"
+  SRC_DIR: ./src
+  DIST_DIR: ./dist
+  INFRA_DIR: ./infrastructure
+  TESTS_DIR: ./src/tests
+
+tasks:
+  setup:
+    desc: venv setup
+    cmds:
+      - uv venv --python {% raw %}{{.PYTHON_VERSION}}{% endraw %}
+  lint:
+    desc: Run linters
+    cmds:
+      - pre-commit run --all-files
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf {% raw %}{{.DIST_DIR}}{% endraw %}
+      - task: test:clean
+      - task: cdk:clean
+      - task: docs:clean
+
+  cruft:update:
+    desc: Update project from cookiecutter template and auto-resolve conflicts
+    cmds:
+      - echo "Running cruft update..."
+      - cruft update --skip-apply-ask --allow-untracked-files
+      - echo "Processing .rej files..."
+      - bash scripts/cruft_resolver.sh
+      - echo "Cruft update completed successfully!"

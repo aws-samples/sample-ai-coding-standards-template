@@ -1,0 +1,42 @@
+version: "3"
+
+vars:
+  PYTHON_VERSION: "{{cookiecutter.python_version}}"
+  INFRA_DIR: .
+  SCRIPTS_DIR: ./scripts
+  STACKS_DIR: ./stacks
+  DIST_DIR: ../../dist
+  VENV_DIR: .venv
+
+tasks:
+  setup:
+    desc: Set up infrastructure virtual environment and dependencies
+    cmds:
+      - uv pip install -r requirements.txt
+
+  build:
+    desc: Build Lambda functions
+    cmds:
+      - uv run ./scripts/lambda_build.py
+
+  deploy:
+    desc: Deploy to AWS
+    cmds:
+      - uv run cdk deploy --all --require-approval never
+
+  destroy:
+    desc: Destroy AWS resources
+    cmds:
+      - uv run cdk destroy --all --force
+
+  synth:
+    desc: Synthesize CloudFormation templates
+    cmds:
+      - uv run cdk synth
+
+  clean:
+    desc: Clean infrastructure artifacts
+    cmds:
+      - rm -rf {% raw %}{{.VENV_DIR}}{% endraw %}
+      - rm -rf {% raw %}{{.DIST_DIR}}{% endraw %}
+      - rm -rf cdk.out

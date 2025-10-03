@@ -1,0 +1,81 @@
+/* Custom CSS for {{cookiecutter.project_name}} Documentation */
+
+/* Improve code block styling */
+.highlight {
+    border-radius: 0.25rem;
+    margin: 1em 0;
+}
+
+/* Better spacing for docstring sections */
+.doc-section {
+    margin: 1.5em 0;
+}
+
+/* Style for architecture layer headers */
+.architecture-layer {
+    border-left: 4px solid var(--md-primary-fg-color);
+    padding-left: 1rem;
+    margin: 1rem 0;
+}
+
+/* Improve navigation for hexagonal architecture */
+.md-nav__item--nested > .md-nav__link {
+    font-weight: 600;
+}
+
+/* Better styling for module signatures */
+.doc-signature {
+    background-color: var(--md-code-bg-color);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    font-family: var(--md-code-font);
+}
+
+/* Improve table styling for docstring parameters */
+.doc-table {
+    margin: 1rem 0;
+}
+
+.doc-table th {
+    background-color: var(--md-default-bg-color--light);
+    font-weight: 600;
+}
+
+/* Style for code examples in docstrings */
+.doc-example {
+    border-left: 4px solid var(--md-accent-fg-color);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    background-color: var(--md-code-bg-color);
+    border-radius: 0.25rem;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 76.1875em) {
+    .md-nav--primary .md-nav__title {
+        background-color: var(--md-primary-fg-color);
+    }
+}
+
+/* Dark mode adjustments */
+[data-md-color-scheme="slate"] {
+    --md-code-bg-color: #2d3748;
+}
+
+/* Print styles */
+@media print {
+    .md-header,
+    .md-tabs,
+    .md-footer {
+        display: none;
+    }
+
+    .md-main__inner {
+        margin: 0;
+    }
+
+    .md-content {
+        margin: 0;
+    }
+}

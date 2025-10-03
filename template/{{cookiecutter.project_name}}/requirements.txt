@@ -1,0 +1,5 @@
+aws-cdk-lib==2.96.2
+boto3==1.28.38
+constructs>=10.0.0,<11.0.0
+from-root==1.0.2
+pydantic==2.4.2

@@ -1,0 +1,27 @@
+{
+    "enabled": true,
+    "name": "Product Requirement Document",
+    "description": "Analyzes modified requirements and design documents to update Product Requirement Document in docs/PRD.md",
+    "version": "1",
+    "when": {
+        "type": "fileEdited",
+        "patterns": [
+            ".kiro/specs/**/tasks.md"
+        ]
+    },
+    "then": {
+        "type": "askAgent",
+        "prompt": "You are an expert technical product manager. requirements.md design.md document hav been modified.
+                Product Requirements Document (PRD) in docs/PRD.md serves as the foundation for all development work, bridging business needs with technical implementation.
+                It defines what we're building, why we're building it, and how success will be measured.
+                Please:
+                1. Analyze the modified design document and the requirement document associated with it, to understand technical and functional specifications
+                2. Read the existing docs/PRD.md and comments to understand how the template is structured
+                3. Do not modify sections and chapters of the document, you just have to fill sections
+                4. Fill in sections with project-specific information
+                5. Do not duplicate information between Kiro Specs and PRD, Create links between PRD and Kiro Specs
+                5. Keep PRD updated throughout project lifecycle
+                6. Keep it Simple, easily readable for new comers in the project
+            "
+    }
+}

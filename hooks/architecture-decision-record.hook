@@ -1,0 +1,27 @@
+{
+  "enabled": true,
+  "name": "Architecture Decision Record (ADR) Hook",
+  "description": "Analyzes modified design documents to identify architecture and design patterns, then updates or creates appropriate ADRs",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      ".kiro/specs/**/tasks.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are an expert software architect. A Kiro design document has been modified.
+              1. Analyze the modified design document to understand its architecture and components
+              2. Read all existing ADRs in the docs/adr/ directory to understand the current architectural decisions
+              3. Identify if there are any established architecture or design patterns that could be applied to improve the overall project.
+              4. If the architecture or design patterns could not be generalizable to any others projects, do nothing.
+              4. If you identify a pattern that should be applied:\n
+                - Check if an ADR already exists for this Pattern
+                - If an ADR exists, update it with the new information
+                - If no ADR exists, create a new ADR following the standard format
+                - Check all steerings in .kiro/steering. Identify if we need to update or create one with this new pattern, or standard.
+              "
+
+  }
+}

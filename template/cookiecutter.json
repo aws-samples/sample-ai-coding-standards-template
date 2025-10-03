@@ -1,0 +1,9 @@
+{
+  "project_name": "hexagonal-architecture-serverless-python-cdk-project",
+  "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
+  "author_name": "Anonymous",
+  "author_email": "anonymous@anonymous.com",
+  "project_description": "A CDK Python Lambda project using hexagonal architecture with integration tests",
+  "python_version": "3.12",
+  "include_example_function": ["yes", "no"]
+}

@@ -1,0 +1,280 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "0.1.0"
+description = "{{ cookiecutter.project_description }}"
+authors = [
+  {name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">={{ cookiecutter.python_version }}"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-cov>=4.0.0",
+  "black>=23.0.0",
+  "isort>=5.0.0",
+  "mypy>=1.0.0",
+  "pre-commit>=3.0.0",
+  "vulture>=2.13"
+]
+
+[tool.bandit]
+exclude_dirs = ["src/tests"]
+skips = ["B101", "B404", "B603", "B607"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.pyi?$'
+
+[tool.cruft]
+# Skip these files/directories when running cruft update
+# This prevents binary files and build artifacts from causing unicode decode errors
+skip = [
+  # Git directories and files
+  ".git",
+  ".git/*",
+  "*.git",
+  # Python virtual environments
+  ".venv",
+  ".venv/*",
+  "venv",
+  "venv/*",
+  ".env",
+  ".env/*",
+  # Python cache and build artifacts
+  "__pycache__",
+  "__pycache__/*",
+  "**/__pycache__",
+  "**/__pycache__/*",
+  "*.pyc",
+  "*.pyo",
+  "*.pyd",
+  ".Python",
+  "build",
+  "build/*",
+  "develop-eggs",
+  "develop-eggs/*",
+  "dist",
+  "dist/*",
+  "downloads",
+  "downloads/*",
+  "eggs",
+  "eggs/*",
+  ".eggs",
+  ".eggs/*",
+  "lib",
+  "lib/*",
+  "lib64",
+  "lib64/*",
+  "parts",
+  "parts/*",
+  "sdist",
+  "sdist/*",
+  "var",
+  "var/*",
+  "wheels",
+  "wheels/*",
+  "*.egg-info",
+  "*.egg-info/*",
+  ".installed.cfg",
+  "*.egg",
+  "MANIFEST",
+  # CDK build artifacts
+  "cdk.out",
+  "cdk.out/*",
+  "cdk.context.json",
+  ".cdk.staging",
+  ".cdk.staging/*",
+  # Node.js dependencies and build artifacts
+  "node_modules",
+  "node_modules/*",
+  "npm-debug.log*",
+  "yarn-debug.log*",
+  "yarn-error.log*",
+  ".npm",
+  ".npm/*",
+  ".yarn",
+  ".yarn/*",
+  # IDE and editor files
+  ".vscode",
+  ".vscode/*",
+  ".idea",
+  ".idea/*",
+  "*.swp",
+  "*.swo",
+  "*~",
+  ".DS_Store",
+  "Thumbs.db",
+  # Test and coverage artifacts
+  ".coverage",
+  ".coverage.*",
+  "coverage.xml",
+  "*.cover",
+  ".hypothesis",
+  ".hypothesis/*",
+  ".pytest_cache",
+  ".pytest_cache/*",
+  ".tox",
+  ".tox/*",
+  ".nox",
+  ".nox/*",
+  "htmlcov",
+  "htmlcov/*",
+  # Documentation build artifacts
+  "docs/_build",
+  "docs/_build/*",
+  ".mkdocs_cache",
+  ".mkdocs_cache/*",
+  "site",
+  "site/*",
+  # Temporary files
+  "*.tmp",
+  "*.temp",
+  ".tmp",
+  ".tmp/*",
+  ".temp",
+  ".temp/*",
+  # Log files
+  "*.log",
+  "logs",
+  "logs/*",
+  # Database files
+  "*.db",
+  "*.sqlite",
+  "*.sqlite3",
+  # Environment and secrets
+  ".env.local",
+  ".env.*.local",
+  "*.pem",
+  "*.key",
+  "*.crt",
+  "*.p12",
+  "*.pfx",
+  # Terraform artifacts (if used alongside CDK)
+  ".terraform",
+  ".terraform/*",
+  "*.tfstate",
+  "*.tfstate.*",
+  ".terraform.lock.hcl",
+  # Docker artifacts
+  ".dockerignore",
+  "Dockerfile.local",
+  # OS generated files
+  ".Spotlight-V100",
+  ".Trashes",
+  "ehthumbs.db",
+  "Desktop.ini",
+  # Backup files created by cruft resolver
+  "*.backup"
+]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+mypy_path = [
+  "src/shared",
+  "src"
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+python_classes = "Test*"
+# Add paths to enable clean imports
+pythonpath = [
+  "src/shared", # For domain, adapters, models, etc.
+  "src" # For functions, tests
+]
+markers = [
+  "integration: marks tests as integration tests (deselect with '-m \"not integration\"')"
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors
+  "W", # pycodestyle warnings
+  "F", # pyflakes
+  "I", # isort
+  "B", # flake8-bugbear
+  "C4", # flake8-comprehensions
+  "UP", # pyupgrade
+  "ARG", # flake8-unused-arguments
+  "SIM", # flake8-simplify
+  "TCH", # flake8-type-checking
+  "PTH", # flake8-use-pathlib
+  "ERA", # eradicate
+  "PL", # pylint
+  "RUF" # ruff-specific rules
+]
+ignore = [
+  "COM812", # Trailing comma missing - conflicts with formatter
+  "ISC001", # Implicitly concatenated string literals - conflicts with formatter
+  "E501", # Line too long - handled by formatter
+  "PLR0913", # Too many arguments to function call
+  "PLR0915", # Too many statements
+  "PLR2004", # Magic value used in comparison
+  "ARG002", # Unused method argument (common in handlers)
+  "B008" # Do not perform function calls in argument defaults (common in FastAPI)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+  "S101", # Use of assert detected
+  "PLR2004", # Magic value used in comparison
+  "ARG001" # Unused function argument
+]
+"**/handler.py" = [
+  "ARG001" # Unused function argument (context in Lambda handlers)
+]
+
+[tool.vulture]
+# Paths to scan for dead code
+paths = ["src"]
+# Minimum confidence level (0-100) for reporting dead code
+min_confidence = 80
+# Ignore decorators that may make code appear unused
+ignore_decorators = ["@app.route", "@click.command", "@tool", "@pytest.fixture"]
+# Ignore names that match these patterns
+ignore_names = ["_*", "test_*", "Test*"]
+# Sort output by confidence level
+sort_by_size = true
+# Exclude specific files or directories
+exclude = [
+  "src/tests/",
+  "*/migrations/*",
+  "*/venv/*",
+  "*/.venv/*"
+]
+# Make whitelist files for common false positives
+make_whitelist = false

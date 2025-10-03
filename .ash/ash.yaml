@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/awslabs/automated-security-helper/refs/heads/main/automated_security_helper/schemas/AshConfig.json
+project_name: my-project
+global_settings:
+  severity_threshold: MEDIUM
+  ignore_paths:
+    - path: "dist/"
+      reason: "output folders"
+    - path: "docs/"
+      reason: "documentation"

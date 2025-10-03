@@ -1,0 +1,138 @@
+version: "3"
+
+vars:
+  # Project-level MCP configuration paths
+  PROJECT_MCP_CONFIGS:
+    - tool: ".roocode"
+      filename: "mcp.json"
+    - tool: ".amazonq"
+      filename: "mcp.json"
+    - tool: ".kiro/settings"
+      filename: "mcp.json"
+    - tool: ".cursor"
+      filename: "mcp.json"
+    - tool: ".cline"
+      filename: "cline_mcp_settings.json"
+
+  # Template configuration
+  TEMPLATE_DIR: template/{{`{{cookiecutter.project_name}}`}}
+
+  RULE_CONFIGS:
+    - tool: ".amazonq"
+      rules: "rules"
+    - tool: ".cursor"
+      rules: "rules"
+    - tool: ".cline"
+      rules: "rules"
+    - tool: ".roocode"
+      rules: "rules"
+    - tool: ".kiro"
+      rules: "steering"
+
+  HOOK_CONFIGS:
+    - tool: ".kiro"
+      hooks: "hooks"
+
+includes:
+  dist:
+    dir: ./
+    optional: true
+    taskfile: ./deploy
+tasks:
+  install:template:mcp:
+    desc: Install MCP configuration files into template
+    cmds:
+      - for:
+          var: PROJECT_MCP_CONFIGS
+        cmd: |
+          echo "📦 Installing MCP config to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.filename}}"
+          mkdir -p "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}"
+          rsync -a mcp/mcp.json "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.filename}}"
+          echo "✅ Installed MCP config to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.filename}}"
+
+  install:template:rules:
+    desc: Install rules into template
+    cmds:
+      - for:
+          var: RULE_CONFIGS
+        cmd: |
+          echo "📋 Installing rules to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.rules}}"
+          mkdir -p "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.rules}}"
+          rsync -a --delete rules/ "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.rules}}/"
+          echo "✅ Installed rules to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.rules}}"
+
+  install:template:hooks:
+    desc: Install hooks into template
+    cmds:
+      - for:
+          var: HOOK_CONFIGS
+        cmd: |
+          echo "🪝 Installing hooks to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.hooks}}"
+          mkdir -p "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.hooks}}"
+          rsync -a --delete hooks/ "{{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.hooks}}/"
+          echo "✅ Installed hooks to template: {{.TEMPLATE_DIR}}/{{.ITEM.tool}}/{{.ITEM.hooks}}"
+
+  install:template:
+    desc: Install all configurations into template
+    cmds:
+      - echo "🧩 Installing all configurations into template..."
+    deps:
+      - install:template:mcp
+      - install:template:rules
+      - install:template:hooks
+
+  install:pre-commit:
+    desc: Install pre-commit hooks
+    ignore_error: true
+    cmds:
+      - echo "🔧 Installing pre-commit hooks..."
+      - git config --local core.hooksPath ""
+      - GIT_CONFIG=/dev/null pre-commit install || echo "⚠️  Pre-commit installation skipped"
+      - git config --local --unset core.hooksPath || true
+      - echo "✅ Pre-commit installation completed"
+
+  pre-commit:run:
+    desc: Run pre-commit hooks on all files
+    cmds:
+      - echo "🔍 Running pre-commit hooks on all files..."
+      - pre-commit run --all-files
+      - echo "✅ Pre-commit hooks completed"
+
+  pre-commit:update:
+    desc: Update pre-commit hooks to the latest version
+    cmds:
+      - echo "⬆️ Updating pre-commit hooks to latest versions..."
+      - pre-commit autoupdate
+      - echo "✅ Pre-commit hooks updated successfully"
+
+  install:
+    desc: Install all configurations into template and set up pre-commit
+    cmds:
+      - echo "🚀 Starting installation process..."
+    deps:
+      - install:template
+      - install:pre-commit
+
+  security:ash:
+    desc: Run locally AWS Automated Security Helper
+    cmds:
+      - uvx git+https://github.com/awslabs/automated-security-helper.git@v3.0.0 --mode local
+
+  security:secrets:
+    desc: Run AWS git secrets
+    cmds:
+      - git secrets --scan
+
+  security:semgrep:
+    desc: Run semgrep security scan for XSS and template injection
+    cmds:
+      - |
+        semgrep scan \
+          --config "p/python" \
+          --config "p/flask" \
+          --config "p/xss" \
+          --config "p/secrets" \
+          --config .semgrep.yml \
+          --severity ERROR \
+          --metrics=off \
+          --verbose

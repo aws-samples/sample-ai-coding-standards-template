@@ -1,0 +1,108 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: "^.*\\.ts$" # Exclude all .ts files, including HLS stream segments
+repos:
+  - repo: local
+    hooks:
+      - id: jinja2-aware-ruff
+        name: Ruff (skip Jinja2 files)
+        entry: bash -c 'for file in "$@"; do if [[ "$file" != template/* ]] && ! grep -q "{{.*}}" "$file" 2>/dev/null; then ruff check --fix "$file"; fi; done' --
+        language: system
+        types: [python]
+        pass_filenames: true
+
+      - id: jinja2-aware-ruff-format
+        name: Ruff Format (skip Jinja2 files)
+        entry: bash -c 'for file in "$@"; do if [[ "$file" != template/* ]] && ! grep -q "{{.*}}" "$file" 2>/dev/null; then ruff format "$file"; fi; done' --
+        language: system
+        types: [python]
+        pass_filenames: true
+
+      - id: jinja2-aware-bandit
+        name: Bandit (skip Jinja2 files)
+        entry: bash -c 'files=(); for file in "$@"; do if [[ "$file" != template/* ]] && ! grep -q "{{.*}}" "$file" 2>/dev/null; then files+=("$file"); fi; done; if [ ${#files[@]} -gt 0 ]; then bandit -c pyproject.toml "${files[@]}"; fi' --
+        language: system
+        types: [python]
+        pass_filenames: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+
+    hooks:
+      # File formatting
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+      # Python specific
+      - id: check-docstring-first
+      - id: check-builtin-literals
+
+      # Security
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+
+      # General checks
+      - id: check-case-conflict
+      - id: check-added-large-files
+        exclude: infra/packages
+        args: ["--maxkb=14000"]
+      - id: check-merge-conflict
+
+      # File format checks - exclude template files with Jinja2
+      - id: check-yaml
+        exclude: template/.*Taskfile\.(yml|yaml)$
+      - id: check-toml
+      - id: check-json
+      - id: sort-simple-yaml
+      - id: requirements-txt-fixer
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or:
+          - yaml
+          - json
+        exclude: template/.*Taskfile\.(yml|yaml)$
+
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.24.3
+    hooks:
+      - id: toml-sort
+      - id: toml-sort-fix
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint-fix
+        exclude: .kiro/
+
+  - repo: https://github.com/frnmst/md-toc
+    rev: 9.0.0
+    hooks:
+      - id: md-toc
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+        args: []
+
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.2.471
+    hooks:
+      - id: checkov
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.34.0
+    hooks:
+      - id: check-gitlab-ci
+      - id: check-taskfile
+
+  - repo: https://github.com/awslabs/automated-security-helper
+    rev: v3.0.0
+    hooks:
+      - id: ash-simple-scan

@@ -1,0 +1,180 @@
+rules:
+  - id: generic.secrets.security.detected-aws-account-id.detected-aws-account-id
+    message: AWS Account ID in configuration
+    severity: WARNING
+    languages: [generic]
+    pattern: $AWS_ID
+    paths:
+      exclude:
+        - docs/
+        - docs/**
+        - tests/
+        - tests/**
+        - ash_output/
+        - ash_output/**
+        - dist/
+        - dist/**
+        - infra/cdk.json
+        - infra/packages/
+        - infra/packages/**
+        - "**/tests/**"
+        - "**/dist/**"
+        - "**/__pycache__/**"
+        - "**/.git/**"
+        - "**/.ruff_cache/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/node_modules/**"
+        - "**/.amazonq/**"
+        - "**/.cline/**"
+        - "**/.cursor/**"
+        - "**/.gitlab/**"
+        - "**/.kiro/**"
+        - "**/.roocode/**"
+        - "**/*.pyc"
+        - "**/*.pyo"
+        - "**/*.so"
+        - "**/*.o"
+        - "**/*.a"
+        - "**/*.dll"
+        - "**/*.exe"
+        - "**/*.out"
+        - "pyproject.toml"
+        - "requirements.txt"
+        - "requirements-dev.txt"
+
+  - id: html.security.audit.missing-integrity.missing-integrity
+    message: Missing integrity attribute in script tag
+    pattern: <script $...A >...</script>
+    severity: WARNING
+    languages: [html]
+    paths:
+      exclude:
+        - docs/
+        - docs/**
+        - tests/
+        - tests/**
+        - ash_output/
+        - ash_output/**
+        - dist/
+        - dist/**
+        - infra/cdk.json
+        - infra/packages/
+        - infra/packages/**
+        - "**/tests/**"
+        - "**/dist/**"
+        - "**/__pycache__/**"
+        - "**/.git/**"
+        - "**/.ruff_cache/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/node_modules/**"
+        - "**/.amazonq/**"
+        - "**/.cline/**"
+        - "**/.cursor/**"
+        - "**/.gitlab/**"
+        - "**/.kiro/**"
+        - "**/.roocode/**"
+        - "**/*.pyc"
+        - "**/*.pyo"
+        - "**/*.so"
+        - "**/*.o"
+        - "**/*.a"
+        - "**/*.dll"
+        - "**/*.exe"
+        - "**/*.out"
+
+  - id: missing-integrity
+    message: Missing integrity attribute in script or link tag
+    metadata:
+      category: security
+      technology:
+        - html
+      confidence: LOW
+    patterns:
+      - pattern-either:
+          - pattern: <script $...A >...</script>
+          - pattern: <link $...A >
+    paths:
+      exclude:
+        - docs/
+        - docs/**
+        - tests/
+        - tests/**
+        - ash_output/
+        - ash_output/**
+        - dist/
+        - dist/**
+        - infra/cdk.json
+        - infra/packages/
+        - infra/packages/**
+        - "**/tests/**"
+        - "**/dist/**"
+        - "**/__pycache__/**"
+        - "**/.git/**"
+        - "**/.ruff_cache/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/node_modules/**"
+        - "**/.amazonq/**"
+        - "**/.cline/**"
+        - "**/.cursor/**"
+        - "**/.gitlab/**"
+        - "**/.kiro/**"
+        - "**/.roocode/**"
+        - "**/*.pyc"
+        - "**/*.pyo"
+        - "**/*.so"
+        - "**/*.o"
+        - "**/*.a"
+        - "**/*.dll"
+        - "**/*.exe"
+        - "**/*.out"
+    severity: WARNING
+    languages:
+      - generic
+
+  - id: python.lang.security.audit.non-literal-import.non-literal-import
+    message: Untrusted user input in `importlib.import_module()` function allows an attacker to load arbitrary code. Avoid dynamic values in `importlib.import_module()` or use a whitelist to prevent running untrusted code.
+    severity: WARNING
+    languages: [python]
+    pattern: importlib.import_module(...)
+    paths:
+      exclude:
+        - docs/
+        - docs/**
+        - tests/
+        - tests/**
+        - ash_output/
+        - ash_output/**
+        - dist/
+        - dist/**
+        - infra/cdk.json
+        - infra/packages/
+        - infra/packages/**
+        - "**/tests/**"
+        - "**/dist/**"
+        - "**/__pycache__/**"
+        - "**/.git/**"
+        - "**/.ruff_cache/**"
+        - "**/.cache/**"
+        - "**/*.min.js"
+        - "**/*.min.css"
+        - "**/node_modules/**"
+        - "**/.amazonq/**"
+        - "**/.cline/**"
+        - "**/.cursor/**"
+        - "**/.gitlab/**"
+        - "**/.kiro/**"
+        - "**/.roocode/**"
+        - "**/*.pyc"
+        - "**/*.pyo"
+        - "**/*.so"
+        - "**/*.o"
+        - "**/*.a"
+        - "**/*.dll"
+        - "**/*.exe"
+        - "**/*.out"

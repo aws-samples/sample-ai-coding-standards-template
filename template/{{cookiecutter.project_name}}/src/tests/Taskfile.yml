@@ -1,0 +1,28 @@
+version: "3"
+
+tasks:
+  setup:
+    desc: Set up test virtual environment and dependencies
+    cmds:
+      - uv pip install -r requirements.txt
+      - uv pip install -r ../shared/requirements.txt
+
+  all:
+    desc: Run all tests
+    cmds:
+      - uv run pytest -v
+
+  adapters:
+    desc: Run adapter integration tests
+    cmds:
+      - uv run pytest -v integration/adapters/
+
+  services:
+    desc: Run service integration tests
+    cmds:
+      - uv run pytest -v integration/services/ --tb=short
+
+  functions:
+    desc: Run function integration tests
+    cmds:
+      - uv run pytest -v integration/functions/

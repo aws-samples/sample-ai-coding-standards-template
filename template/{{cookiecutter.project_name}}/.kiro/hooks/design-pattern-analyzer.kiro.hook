@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Design Pattern Analyzer",
+  "description": "Analyzes modified design documents to identify architecture and design patterns, then updates or creates appropriate ADRs",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      ".kiro/specs/**/tasks.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "You are an expert software architect. A design document has been modified. Please:\n\n1. Analyze the modified design document to understand its architecture and components\n2. Read all existing ADRs in the docs/adr/ directory to understand the current architectural decisions\n3. Identify if there are any established architecture or design patterns that could be applied to improve the overall project\n4. If you identify a pattern that should be applied:\n   - Check if an ADR already exists for this pattern\n   - If an ADR exists, update it with the new information\n   - If no ADR exists, create a new ADR following the standard format with proper numbering\n   - Check all steerings in .kiro/steering. Identify if we need to update or create one with this new pattern, or standard.\n   \nThe ADR should include:\n- Title: Clear name of the pattern\n- Status: Proposed\n- Context: Why this pattern is applicable to the project\n- Decision: Details of the pattern and how it should be implemented\n- Consequences: Benefits and potential drawbacks\n- Alternatives Considered: Other patterns that were considered but rejected\n\nBe thorough in your analysis and provide concrete implementation guidance in the ADR.\nThe recommendations you give should be generalizable to any project, so don't be specific."
+  }
+}
