@@ -41,19 +41,7 @@ tasks:
       - rm -rf ../.mkdocs_cache/
 
   all:
-    desc: "Complete workflow: setup, build, and validate"
+    desc: "Complete workflow: setup and build"
     cmds:
       - task: setup
       - task: build
-
-  gitlab:
-    desc: "Build documentation for GitLab Pages deployment"
-    deps: [setup]
-    env:
-      # GitLab Pages specific configuration
-      DOCS_SITE_URL: "https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME"
-      DOCS_REPO_URL: "$CI_PROJECT_URL"
-      DOCS_REPO_NAME: "$CI_PROJECT_NAME"
-      DOCS_EDIT_URI: "edit/main/docs/"
-    cmds:
-      - uv run mkdocs build --clean --config-file ../mkdocs.yml --site-dir ../public

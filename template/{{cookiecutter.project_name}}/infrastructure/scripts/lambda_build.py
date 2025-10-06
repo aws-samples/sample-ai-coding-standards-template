@@ -38,7 +38,6 @@ class LambdaBuild:
     def __init__(self):
         """Initialize build paths."""
         self.dist_dir = LAMBDA_DIST
-        # self.layers_dir = LAMBDA_DIST_LAYERS
         self.shared_dir = LAMBDA_DIST_SHARED
 
         # Remove dist directories to be cleaned
