@@ -1,230 +1,158 @@
 # {{cookiecutter.project_name}}
 
-A CDK Python Lambda project using hexagonal architecture with integration tests
+A CDK Python Lambda project using hexagonal architecture with integration tests and AI assistant configurations.
 
 ## Architecture
 
-This project implements **Hexagonal Serverless Architecture** (also known as Ports and Adapters pattern), which ensures clean separation of concerns and high testability in serverless applications.
+This project implements **Hexagonal Architecture** (Ports and Adapters pattern) for clean separation of concerns and high testability in serverless applications.
 
-### What is Hexagonal Serverless Architecture?
+### Architecture Layers
 
-Hexagonal architecture organizes code into three main layers:
+1. **Domain Layer**: Pure business logic with models and services
+2. **Ports Layer**: Interface contracts for external dependencies
+3. **Adapters Layer**: Concrete implementations for AWS services
 
-1. **Inner Layer (Domain)**: Pure business logic, independent of external systems
-2. **Middle Layer (Ports)**: Interface contracts defining how the domain interacts with external systems
-3. **Outer Layer (Adapters)**: Concrete implementations that connect to external systems (databases, APIs, file systems)
+### Key Components
 
-### Class Roles and Responsibilities
+#### 1. **Models** (`src/shared/models/`)
 
-#### 1. **Port Classes** (`ports/`)
-
-**Role**: Interface contracts that define operations without implementation
+Domain entities representing core business concepts:
 
 ```python
-# Example: GreetingPort
-class GreetingPort(ABC):
-    @abstractmethod
-    def save_greeting(self, name: str, greeting: str) -> None:
-        pass
-
-    @abstractmethod
-    def get_saved_greeting(self, name: str) -> str:
-        pass
-```
-
-**Why Important**:
-
-- ✅ **Defines contracts** - What operations are available
-- ✅ **Enables dependency inversion** - Services depend on abstractions, not concrete implementations
-- ✅ **Facilitates testing** - Easy to create mock implementations
-- ✅ **Promotes flexibility** - Can swap different implementations without changing business logic
-
-#### 2. **Service Classes** (`domain/services/`)
-
-**Role**: Contains business logic and orchestrates domain operations
-
-```python
-# Example: GreetingService
-class GreetingService:
-    def __init__(self, greeting_port: GreetingPort = None):
-        self.greeting_port = greeting_port  # Depends on PORT interface
-
-    def get_greeting(self, name: str) -> str:
-        # Business logic here
-        return self.greeting_port.get_saved_greeting(name)
-```
-
-**Why Important**:
-
-- ✅ **Pure business logic** - No external dependencies, only domain concepts
-- ✅ **Testable** - Easy to unit test with mock ports
-- ✅ **Reusable** - Can be used across different Lambda functions
-- ✅ **Maintainable** - Changes to external systems don't affect business logic
-
-#### 3. **Adapter Classes** (`adapters/`)
-
-**Role**: Concrete implementations that connect to external systems
-
-```python
-# Example: GreetingsStorage (DynamoDB Adapter)
-class GreetingsStorage(GreetingPort):  # IMPLEMENTS the port
-    def __init__(self):
-        self.table_name = config.get_required(config.HELLO_WORLD_TABLE_NAME)
-        self.table = boto3.resource("dynamodb").Table(self.table_name)
-
-    def save_greeting(self, name: str, greeting: str) -> None:
-        # DynamoDB-specific implementation
-        self.table.put_item(Item={"name": name, "message": greeting})
-
-    def get_saved_greeting(self, name: str) -> str:
-        # DynamoDB-specific implementation
-        response = self.table.get_item(Key={"name": name})
-        return response.get("Item", {}).get("message", f"Hello, {name}!")
-```
-
-**Why Important**:
-
-- ✅ **External system integration** - Handles databases, APIs, file systems
-- ✅ **Swappable implementations** - Can switch from DynamoDB to S3 to Redis
-- ✅ **Error handling** - Manages external system failures
-- ✅ **Technology isolation** - AWS-specific code stays in adapters
-
-#### 4. **Model Classes** (`domain/models/`)
-
-**Role**: Domain entities that represent core business concepts
-
-```python
-# Example: Greeting model
+# Example: HelloWorld model
 @dataclass
-class Greeting:
+class HelloWorld:
     name: str
-    message: str
+    greeting: str
     created_at: datetime
     updated_at: Optional[datetime] = None
 ```
 
-**Why Important**:
+**Why Important**: Data validation, business rules, type safety, clear data contracts
 
-- ✅ **Data validation** - Ensures data integrity
-- ✅ **Business rules** - Encapsulates domain logic
-- ✅ **Type safety** - Provides clear data contracts
-- ✅ **Immutability** - Prevents accidental data modifications
+#### 2. **Ports** (`src/shared/ports/`)
 
-### Benefits of Hexagonal Serverless Architecture
-
-1. **Testability**: Easy to mock external dependencies
-2. **Maintainability**: Changes to external systems don't affect business logic
-3. **Flexibility**: Can swap implementations (DynamoDB → S3 → Redis)
-4. **Scalability**: Services can be reused across multiple Lambda functions
-5. **Clean Code**: Clear separation of concerns
-
-## Configuration Management
-
-This project uses a centralized configuration service (`config/config_service.py`) to manage all configuration values:
+Interface contracts defining operations:
 
 ```python
-# Example usage in adapters
-from config.config_service import config
+# Example: HelloWorldPort
+class HelloWorldPort(ABC):
+    @abstractmethod
+    def get_saved_greeting(self, name: str) -> HelloWorld:
+        pass
 
-table_name = config.get_required(config.HELLO_WORLD_TABLE_NAME)
+    @abstractmethod
+    def save_greeting(self, greeting: HelloWorld) -> None:
+        pass
 ```
 
-Benefits:
+**Why Important**: Defines contracts, enables dependency inversion, facilitates testing, promotes flexibility
 
-- ✅ Centralized configuration management
-- ✅ Strong validation with no fallbacks
-- ✅ Clear error messages for missing configuration
-- ✅ Type-safe configuration access
+#### 3. **Services** (`src/shared/domain/services/`)
 
-## Resource Discovery
-
-AWS resources are discovered using tags, making tests work with real AWS resources:
+Business logic orchestration:
 
 ```python
-# Example in tests
-from tests.utils.resource_discovery import get_dynamodb_table_name
+# Example: HelloWorldService
+class HelloWorldService:
+    def __init__(self, hello_world_port: HelloWorldPort = None):
+        self.hello_world_port = hello_world_port or HelloWorldStorageAdapter()
 
-table_name = get_dynamodb_table_name("GreetingsTable")
+    def get_greeting(self, name: str) -> str:
+        greeting = self.hello_world_port.get_saved_greeting(name)
+        return greeting.formatted_greeting
 ```
 
-Benefits:
+**Why Important**: Pure business logic, testable, reusable, maintainable
 
-- ✅ No mocking of AWS services
-- ✅ Tests run against real infrastructure
-- ✅ Resource discovery by tags
-- ✅ Clean test setup with fixtures
+#### 4. **Adapters** (`src/shared/adapters/`)
+
+AWS service implementations:
+
+```python
+# Example: HelloWorldStorageAdapter (DynamoDB)
+class HelloWorldStorageAdapter(HelloWorldPort):
+    def __init__(self):
+        self.table_name = config.get_required(config.HELLO_WORLD_TABLE_NAME)
+        self.table = boto3.resource("dynamodb").Table(self.table_name)
+
+    def get_saved_greeting(self, name: str) -> HelloWorld:
+        response = self.table.get_item(Key={"name": name})
+        if "Item" in response:
+            return HelloWorld.from_dict(response["Item"])
+        return HelloWorld(name=name, greeting=None)
+```
+
+**Why Important**: External system integration, swappable implementations, error handling, technology isolation
 
 ## Quick Start
 
 Install [taskfile.dev](https://taskfile.dev/) and [uv](https://docs.astral.sh/uv/)
 
-1. **Set up development environment**:
+```bash
+# Set up development environment
+task setup
 
-   ```bash
-   task setup
-   ```
+# Set up infrastructure and build Lambda functions
+task cdk:setup
+task cdk:build
 
-2. **Set up infrastructure environment and build Lambda functions**:
+# Deploy to AWS
+task cdk:deploy
 
-   ```bash
-   task cdk:setup
-   task cdk:build
-   ```
+# Set up tests and run them
+task test:setup
+task test:all
 
-3. **Deploy to AWS**:
+# Serve documentation locally
+task docs:serve
+```
 
-   ```bash
-   task cdk:deploy
-   ```
+## AI Assistant Integration
 
-4. **Set up test environment and run tests**:
+This project includes pre-configured AI assistant support:
 
-   ```bash
-   task test:setup
-   task test:all
-   ```
+- **Amazon Q Developer** (`.amazonq/`)
+- **Cursor AI** (`.cursor/`)
+- **Cline** (`.cline/`)
+- **Roo Cline** (`.roocode/`)
+- **Kiro AI** (`.kiro/`)
+
+Each configuration includes development rules, MCP servers, and project-specific context for better AI assistance.
 
 ## Template Updates
 
 Keep your project synchronized with template improvements:
 
 ```bash
-# Automated template updates with conflict resolution
 task cruft:update
 ```
 
-**Features:**
+## Author
 
-- ✅ **No manual intervention** - Fully automated conflict resolution
-- ✅ **Always succeeds** - Never blocks your workflow
-
-The automation uses intelligent patching with multiple fallback strategies and always leaves your workspace clean.
+{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>
 
 ## Project Structure
 
 ```bash
 {{cookiecutter.project_name}}/
 ├── src/
-│   ├── config_path.py       # Source path configuration
 │   ├── shared/              # Shared code
-│   │   ├── domain/          # Business logic and models
-│   │   ├── ports/           # Interfaces
-│   │   └── adapters/        # External system implementations
+│   │   ├── models/          # Domain models
+│   │   ├── ports/           # Interface contracts
+│   │   ├── adapters/        # AWS service implementations
+│   │   ├── domain/services/ # Business logic
+│   │   └── config/          # Configuration management
 │   ├── functions/           # Lambda functions
-│   └── tests/               # Tests
-├── infrastructure/
-│   ├── config_path.py       # Infrastructure path configuration
-│   ├── scripts/             # Build and deployment scripts
-│   ├── stacks/             # CDK stacks
-│   └── tests/              # Infrastructure tests
+│   └── tests/               # Integration tests
+├── infrastructure/          # CDK stacks and scripts
 ├── docs/                    # Documentation system
-│   ├── mkdocs.yml          # MkDocs configuration
-│   ├── requirements.txt    # Documentation dependencies
-│   ├── Taskfile.yml        # Documentation tasks
-│   └── assets/             # Documentation assets
-├── dist/                    # Build artifacts
-├── Taskfile.yml            # Task definitions
-└── README.md
+├── .amazonq/               # Amazon Q configuration
+├── .cursor/                # Cursor AI configuration
+├── .cline/                 # Cline configuration
+├── .roocode/               # Roo Cline configuration
+├── .kiro/                  # Kiro AI configuration
+└── Taskfile.yml            # Task automation
 ```
 
 ## Documentation

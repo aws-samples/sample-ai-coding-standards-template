@@ -62,11 +62,26 @@ Pre-configured for multiple AI coding assistants:
 
 ### Architecture Patterns
 
-- **Hexagonal Architecture** - Clean separation of concerns
-- **Domain-Driven Design** - Business logic first
-- **AWS CDK** - Infrastructure as code
-- **Integration Testing** - Real AWS resource testing
-- **Clean Imports** - No complex path management
+- **Hexagonal Architecture** - Clean separation between domain logic, ports, and adapters
+- **Domain-Driven Design** - Business logic first, independent of infrastructure
+- **AWS CDK** - Infrastructure as code with enterprise-grade patterns
+- **Integration Testing** - Real AWS resource testing with tag-based discovery
+- **Clean Imports** - No complex path management, full IDE support
+
+### Key Benefits
+
+**For Development Teams:**
+
+- **Productivity** - AI assistants understand project context without extensive guidance
+- **Quality** - Standardized patterns ensure consistent, maintainable code
+- **Cohérence** - Shared vocabulary between AI assistants and human developers
+- **Scalability** - Enterprise-grade architecture that grows with your needs
+
+**For AI Assistants:**
+
+- **Better Context** - Comprehensive project knowledge and architectural patterns
+- **Accurate Suggestions** - Code follows established standards from creation
+- **Reduced Corrections** - Less time spent reviewing and fixing AI-generated code
 
 ## 3. How to Customize the Solution
 
