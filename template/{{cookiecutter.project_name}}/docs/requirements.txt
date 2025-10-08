@@ -2,7 +2,7 @@ colorama==0.4.6                  # Cross-platform colored terminal text
 
 # Python code analysis and documentation extraction
 griffe==0.38.1                   # Python code analysis for mkdocstrings
-Jinja2==3.1.2                    # Template engine used by MkDocs
+Jinja2==3.1.6                    # Template engine used by MkDocs
 
 # Search functionality
 lunr==0.6.2                      # Search indexing for offline search
